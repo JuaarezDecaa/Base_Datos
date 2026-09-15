@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+venv/
+env/
+
+# Datos masivos (no subir CSVs gigantes al repo)
+*.csv
+*.tsv
+*.zip
+*.rar
+
+# Backups locales
+*.bak
