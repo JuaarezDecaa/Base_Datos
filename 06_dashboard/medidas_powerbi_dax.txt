@@ -1,0 +1,25 @@
+Total Casos = SUM(Fact_Vigilancia_Epidemiologica[cantidad_casos])
+
+Total Casos Graves = 
+CALCULATE(
+    SUM(Fact_Vigilancia_Epidemiologica[cantidad_casos]),
+    Fact_Vigilancia_Epidemiologica[es_caso_grave] = 1
+)
+
+Tasa Severidad Porcentual = 
+DIVIDE([Total Casos Graves], [Total Casos], 0) * 100
+
+Promedio Casos Por Centro = 
+AVERAGEX(
+    VALUES(Dim_Establecimiento[nombre_establecimiento]),
+    [Total Casos]
+)
+
+Total Centros Monitoreados = 
+DISTINCTCOUNT(Dim_Establecimiento[id_establecimiento])
+
+Casos Adultos = 
+CALCULATE(
+    [Total Casos],
+    Dim_Paciente[curso_vida_minsa] = "ADULTO"
+)

@@ -1,0 +1,1335 @@
+﻿<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="9/23/2026 7:09:31 PM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:CreatorComputerName="DESKTOP-T807HB0"
+  DTS:CreatorName="DESKTOP-T807HB0\Silver"
+  DTS:Description="Paquete ETL para el Data Warehouse de Vigilancia Epidemiologica - DIRESA La Libertad"
+  DTS:DTSID="{CE3BE08F-7F0D-4106-BC19-BB47E4E5BA13}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:LastModifiedProductVersion="17.0.1016.0"
+  DTS:LocaleID="10250"
+  DTS:ObjectName="Package"
+  DTS:VersionBuild="2"
+  DTS:VersionGUID="{BAA3C235-EDE3-4D9B-B0D4-61D692F8BC3C}">
+  <DTS:Property
+    DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:ConnectionManagers>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[DataSalud_DW_OLEDB]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{4D5127DB-4535-4766-97DC-3049D8AB03C5}"
+      DTS:ObjectName="DataSalud_DW_OLEDB">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectRetryCount="1"
+          DTS:ConnectRetryInterval="5"
+          DTS:ConnectionString="Data Source=.;Initial Catalog=DataSalud_DW;Provider=SQLOLEDB.1;Integrated Security=SSPI;Auto Translate=False;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[DataSalud_OLEDB]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{04DC335B-4B37-44F9-AFAF-FA61A8DE4086}"
+      DTS:ObjectName="DataSalud_OLEDB">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectRetryCount="1"
+          DTS:ConnectRetryInterval="5"
+          DTS:ConnectionString="Data Source=.;Initial Catalog=DataSalud;Provider=SQLOLEDB.1;Integrated Security=SSPI;Auto Translate=False;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+  </DTS:ConnectionManagers>
+  <DTS:Variables>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{35F30B4A-9BB8-40E5-B951-5F0F5773F150}"
+      DTS:IncludeInDebugDump="6789"
+      DTS:Namespace="User"
+      DTS:ObjectName="CasosExtraidos">
+      <DTS:VariableValue
+        DTS:DataType="3">0</DTS:VariableValue>
+    </DTS:Variable>
+  </DTS:Variables>
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\Tarea 1 - Limpiar Tablas DW"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Ejecuta la limpieza previa de hechos, dimensiones y staging para asegurar idempotencia"
+      DTS:DTSID="{8034DAA2-C786-454C-9F0F-062A9515F93C}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Tarea 1 - Limpiar Tablas DW"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2025; © 2025 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{4D5127DB-4535-4766-97DC-3049D8AB03C5}"
+          SQLTask:SqlStatementSource="EXEC dbo.sp_ETL_LimpiarDW;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)"
+      DTS:CreationName="Microsoft.Pipeline"
+      DTS:Description="Canaliza en memoria la extraccion de microdatos MINSA, conteo de registros y carga hacia la tabla de staging del Data Warehouse"
+      DTS:DTSID="{525F40E9-63D8-4828-A537-102F1EF4FD26}"
+      DTS:ExecutableType="Microsoft.Pipeline"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)"
+      DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <pipeline
+          version="1">
+          <components>
+            <component
+              refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad"
+              componentClassID="Microsoft.OLEDBDestination"
+              contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+              description="Inserta los casos filtrados en la tabla de staging intermedia del Data Warehouse"
+              name="Destino OLE DB - Staging La Libertad"
+              usesDispositions="true"
+              version="4">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset">[dbo].[Staging_Vigilancia_LaLibertad]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">3</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepIdentity">false</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepNulls">false</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                  name="FastLoadOptions"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                  name="FastLoadMaxInsertCommitSize">2147483647</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Connections[OleDbConnection]"
+                  connectionManagerID="Package.ConnectionManagers[DataSalud_DW_OLEDB]"
+                  connectionManagerRefId="Package.ConnectionManagers[DataSalud_DW_OLEDB]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input]"
+                  errorOrTruncationOperation="Insert"
+                  errorRowDisposition="FailComponent"
+                  hasSideEffects="true"
+                  name="OLE DB Destination Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].Columns[id_caso]"
+                      cachedDataType="i4"
+                      cachedName="id_caso"
+                      externalMetadataColumnId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].ExternalColumns[id_caso]"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[id_caso]" />
+                    <inputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].Columns[ano]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="10"
+                      cachedName="ano"
+                      externalMetadataColumnId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].ExternalColumns[ano]"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[ano]" />
+                    <inputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].Columns[semana]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="10"
+                      cachedName="semana"
+                      externalMetadataColumnId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].ExternalColumns[semana]"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[semana]" />
+                    <inputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].Columns[departamento]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="100"
+                      cachedName="departamento"
+                      externalMetadataColumnId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].ExternalColumns[departamento]"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[departamento]" />
+                    <inputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].Columns[provincia]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="100"
+                      cachedName="provincia"
+                      externalMetadataColumnId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].ExternalColumns[provincia]"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[provincia]" />
+                    <inputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].Columns[distrito]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="100"
+                      cachedName="distrito"
+                      externalMetadataColumnId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].ExternalColumns[distrito]"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[distrito]" />
+                    <inputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].Columns[diresa]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="50"
+                      cachedName="diresa"
+                      externalMetadataColumnId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].ExternalColumns[diresa]"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[diresa]" />
+                    <inputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].Columns[ubigeo]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="10"
+                      cachedName="ubigeo"
+                      externalMetadataColumnId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].ExternalColumns[ubigeo]"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[ubigeo]" />
+                    <inputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].Columns[enfermedad]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="100"
+                      cachedName="enfermedad"
+                      externalMetadataColumnId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].ExternalColumns[enfermedad]"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[enfermedad]" />
+                    <inputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].Columns[diagnostic]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="20"
+                      cachedName="diagnostic"
+                      externalMetadataColumnId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].ExternalColumns[diagnostic]"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[diagnostic]" />
+                    <inputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].Columns[edad]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="20"
+                      cachedName="edad"
+                      externalMetadataColumnId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].ExternalColumns[edad]"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[edad]" />
+                    <inputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].Columns[tipo_edad]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="5"
+                      cachedName="tipo_edad"
+                      externalMetadataColumnId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].ExternalColumns[tipo_edad]"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[tipo_edad]" />
+                    <inputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].Columns[sexo]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="5"
+                      cachedName="sexo"
+                      externalMetadataColumnId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].ExternalColumns[sexo]"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[sexo]" />
+                    <inputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].Columns[localcod]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="50"
+                      cachedName="localcod"
+                      externalMetadataColumnId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].ExternalColumns[localcod]"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[localcod]" />
+                  </inputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].ExternalColumns[id_caso]"
+                      dataType="i4"
+                      name="id_caso" />
+                    <externalMetadataColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].ExternalColumns[ano]"
+                      codePage="1252"
+                      dataType="str"
+                      length="10"
+                      name="ano" />
+                    <externalMetadataColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].ExternalColumns[semana]"
+                      codePage="1252"
+                      dataType="str"
+                      length="10"
+                      name="semana" />
+                    <externalMetadataColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].ExternalColumns[departamento]"
+                      codePage="1252"
+                      dataType="str"
+                      length="100"
+                      name="departamento" />
+                    <externalMetadataColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].ExternalColumns[provincia]"
+                      codePage="1252"
+                      dataType="str"
+                      length="100"
+                      name="provincia" />
+                    <externalMetadataColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].ExternalColumns[distrito]"
+                      codePage="1252"
+                      dataType="str"
+                      length="100"
+                      name="distrito" />
+                    <externalMetadataColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].ExternalColumns[diresa]"
+                      codePage="1252"
+                      dataType="str"
+                      length="50"
+                      name="diresa" />
+                    <externalMetadataColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].ExternalColumns[ubigeo]"
+                      codePage="1252"
+                      dataType="str"
+                      length="10"
+                      name="ubigeo" />
+                    <externalMetadataColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].ExternalColumns[enfermedad]"
+                      codePage="1252"
+                      dataType="str"
+                      length="100"
+                      name="enfermedad" />
+                    <externalMetadataColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].ExternalColumns[diagnostic]"
+                      codePage="1252"
+                      dataType="str"
+                      length="20"
+                      name="diagnostic" />
+                    <externalMetadataColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].ExternalColumns[edad]"
+                      codePage="1252"
+                      dataType="str"
+                      length="20"
+                      name="edad" />
+                    <externalMetadataColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].ExternalColumns[tipo_edad]"
+                      codePage="1252"
+                      dataType="str"
+                      length="5"
+                      name="tipo_edad" />
+                    <externalMetadataColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].ExternalColumns[sexo]"
+                      codePage="1252"
+                      dataType="str"
+                      length="5"
+                      name="sexo" />
+                    <externalMetadataColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input].ExternalColumns[localcod]"
+                      codePage="1252"
+                      dataType="str"
+                      length="50"
+                      name="localcod" />
+                  </externalMetadataColumns>
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Outputs[OLE DB Destination Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="OLE DB Destination Error Output"
+                  synchronousInputId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA"
+              componentClassID="Microsoft.OLEDBSource"
+              contactInfo="OLE DB Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;7"
+              description="Extrae los microdatos transaccionales filtrando exclusivamente los casos de la Region La Libertad"
+              name="Origen OLE DB - Microdatos MINSA"
+              usesDispositions="true"
+              version="7">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset"></property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">SELECT TOP 5000 id_caso, ano, semana, departamento, provincia, distrito, diresa, ubigeo, enfermedad, diagnostic, edad, tipo_edad, sexo, localcod FROM dbo.stg_vigilancia_minsa WHERE departamento LIKE '%LIBERTAD%'</property>
+                <property
+                  dataType="System.String"
+                  description="The variable that contains the SQL command to be executed."
+                  name="SqlCommandVariable"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">2</property>
+                <property
+                  dataType="System.String"
+                  description="The mappings between the parameters in the SQL command and variables."
+                  name="ParameterMapping"></property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Connections[OleDbConnection]"
+                  connectionManagerID="Package.ConnectionManagers[DataSalud_OLEDB]"
+                  connectionManagerRefId="Package.ConnectionManagers[DataSalud_OLEDB]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <outputs>
+                <output
+                  refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output]"
+                  name="OLE DB Source Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[id_caso]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].ExternalColumns[id_caso]"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[id_caso]"
+                      name="id_caso"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[ano]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].ExternalColumns[ano]"
+                      length="10"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[ano]"
+                      name="ano"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[semana]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].ExternalColumns[semana]"
+                      length="10"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[semana]"
+                      name="semana"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[departamento]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].ExternalColumns[departamento]"
+                      length="100"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[departamento]"
+                      name="departamento"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[provincia]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].ExternalColumns[provincia]"
+                      length="100"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[provincia]"
+                      name="provincia"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[distrito]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].ExternalColumns[distrito]"
+                      length="100"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[distrito]"
+                      name="distrito"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[diresa]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].ExternalColumns[diresa]"
+                      length="50"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[diresa]"
+                      name="diresa"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[ubigeo]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].ExternalColumns[ubigeo]"
+                      length="10"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[ubigeo]"
+                      name="ubigeo"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[enfermedad]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].ExternalColumns[enfermedad]"
+                      length="100"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[enfermedad]"
+                      name="enfermedad"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[diagnostic]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].ExternalColumns[diagnostic]"
+                      length="20"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[diagnostic]"
+                      name="diagnostic"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[edad]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].ExternalColumns[edad]"
+                      length="20"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[edad]"
+                      name="edad"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[tipo_edad]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].ExternalColumns[tipo_edad]"
+                      length="5"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[tipo_edad]"
+                      name="tipo_edad"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[sexo]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].ExternalColumns[sexo]"
+                      length="5"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[sexo]"
+                      name="sexo"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[localcod]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].ExternalColumns[localcod]"
+                      length="50"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].Columns[localcod]"
+                      name="localcod"
+                      truncationRowDisposition="FailComponent" />
+                  </outputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].ExternalColumns[id_caso]"
+                      dataType="i4"
+                      name="id_caso" />
+                    <externalMetadataColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].ExternalColumns[ano]"
+                      codePage="1252"
+                      dataType="str"
+                      length="10"
+                      name="ano" />
+                    <externalMetadataColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].ExternalColumns[semana]"
+                      codePage="1252"
+                      dataType="str"
+                      length="10"
+                      name="semana" />
+                    <externalMetadataColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].ExternalColumns[departamento]"
+                      codePage="1252"
+                      dataType="str"
+                      length="100"
+                      name="departamento" />
+                    <externalMetadataColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].ExternalColumns[provincia]"
+                      codePage="1252"
+                      dataType="str"
+                      length="100"
+                      name="provincia" />
+                    <externalMetadataColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].ExternalColumns[distrito]"
+                      codePage="1252"
+                      dataType="str"
+                      length="100"
+                      name="distrito" />
+                    <externalMetadataColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].ExternalColumns[diresa]"
+                      codePage="1252"
+                      dataType="str"
+                      length="50"
+                      name="diresa" />
+                    <externalMetadataColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].ExternalColumns[ubigeo]"
+                      codePage="1252"
+                      dataType="str"
+                      length="10"
+                      name="ubigeo" />
+                    <externalMetadataColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].ExternalColumns[enfermedad]"
+                      codePage="1252"
+                      dataType="str"
+                      length="100"
+                      name="enfermedad" />
+                    <externalMetadataColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].ExternalColumns[diagnostic]"
+                      codePage="1252"
+                      dataType="str"
+                      length="20"
+                      name="diagnostic" />
+                    <externalMetadataColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].ExternalColumns[edad]"
+                      codePage="1252"
+                      dataType="str"
+                      length="20"
+                      name="edad" />
+                    <externalMetadataColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].ExternalColumns[tipo_edad]"
+                      codePage="1252"
+                      dataType="str"
+                      length="5"
+                      name="tipo_edad" />
+                    <externalMetadataColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].ExternalColumns[sexo]"
+                      codePage="1252"
+                      dataType="str"
+                      length="5"
+                      name="sexo" />
+                    <externalMetadataColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output].ExternalColumns[localcod]"
+                      codePage="1252"
+                      dataType="str"
+                      length="50"
+                      name="localcod" />
+                  </externalMetadataColumns>
+                </output>
+                <output
+                  refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Error Output]"
+                  isErrorOut="true"
+                  name="OLE DB Source Error Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Error Output].Columns[id_caso]"
+                      dataType="i4"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Error Output].Columns[id_caso]"
+                      name="id_caso" />
+                    <outputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Error Output].Columns[ano]"
+                      codePage="1252"
+                      dataType="str"
+                      length="10"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Error Output].Columns[ano]"
+                      name="ano" />
+                    <outputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Error Output].Columns[semana]"
+                      codePage="1252"
+                      dataType="str"
+                      length="10"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Error Output].Columns[semana]"
+                      name="semana" />
+                    <outputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Error Output].Columns[departamento]"
+                      codePage="1252"
+                      dataType="str"
+                      length="100"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Error Output].Columns[departamento]"
+                      name="departamento" />
+                    <outputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Error Output].Columns[provincia]"
+                      codePage="1252"
+                      dataType="str"
+                      length="100"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Error Output].Columns[provincia]"
+                      name="provincia" />
+                    <outputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Error Output].Columns[distrito]"
+                      codePage="1252"
+                      dataType="str"
+                      length="100"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Error Output].Columns[distrito]"
+                      name="distrito" />
+                    <outputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Error Output].Columns[diresa]"
+                      codePage="1252"
+                      dataType="str"
+                      length="50"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Error Output].Columns[diresa]"
+                      name="diresa" />
+                    <outputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Error Output].Columns[ubigeo]"
+                      codePage="1252"
+                      dataType="str"
+                      length="10"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Error Output].Columns[ubigeo]"
+                      name="ubigeo" />
+                    <outputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Error Output].Columns[enfermedad]"
+                      codePage="1252"
+                      dataType="str"
+                      length="100"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Error Output].Columns[enfermedad]"
+                      name="enfermedad" />
+                    <outputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Error Output].Columns[diagnostic]"
+                      codePage="1252"
+                      dataType="str"
+                      length="20"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Error Output].Columns[diagnostic]"
+                      name="diagnostic" />
+                    <outputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Error Output].Columns[edad]"
+                      codePage="1252"
+                      dataType="str"
+                      length="20"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Error Output].Columns[edad]"
+                      name="edad" />
+                    <outputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Error Output].Columns[tipo_edad]"
+                      codePage="1252"
+                      dataType="str"
+                      length="5"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Error Output].Columns[tipo_edad]"
+                      name="tipo_edad" />
+                    <outputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Error Output].Columns[sexo]"
+                      codePage="1252"
+                      dataType="str"
+                      length="5"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Error Output].Columns[sexo]"
+                      name="sexo" />
+                    <outputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Error Output].Columns[localcod]"
+                      codePage="1252"
+                      dataType="str"
+                      length="50"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Error Output].Columns[localcod]"
+                      name="localcod" />
+                    <outputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Recuento de Casos Extraidos"
+              componentClassID="Microsoft.RowCount"
+              contactInfo="Row Count;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Cuenta las filas canalizadas en memoria y almacena el total en la variable del paquete User::CasosExtraidos"
+              name="Recuento de Casos Extraidos">
+              <properties>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable to hold the row count."
+                  name="VariableName">User::CasosExtraidos</property>
+              </properties>
+              <inputs>
+                <input
+                  refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Recuento de Casos Extraidos.Inputs[Row Count Input 1]"
+                  hasSideEffects="true"
+                  name="Row Count Input 1">
+                  <externalMetadataColumns />
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Recuento de Casos Extraidos.Outputs[Row Count Output 1]"
+                  name="Row Count Output 1"
+                  synchronousInputId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Recuento de Casos Extraidos.Inputs[Row Count Input 1]">
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+          </components>
+          <paths>
+            <path
+              refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad).Paths[OLE DB Source Output]"
+              endId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Recuento de Casos Extraidos.Inputs[Row Count Input 1]"
+              name="OLE DB Source Output"
+              startId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA.Outputs[OLE DB Source Output]" />
+            <path
+              refId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad).Paths[Row Count Output 1]"
+              endId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad.Inputs[OLE DB Destination Input]"
+              name="Row Count Output 1"
+              startId="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Recuento de Casos Extraidos.Outputs[Row Count Output 1]" />
+          </paths>
+        </pipeline>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Tarea 3 - Cargar Dim_Tiempo"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Carga la dimension temporal con semanas epidemiologicas, meses, trimestres y semestres"
+      DTS:DTSID="{03F7A5A8-F946-4A46-8324-76652B875C12}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Tarea 3 - Cargar Dim_Tiempo"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2025; © 2025 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{4D5127DB-4535-4766-97DC-3049D8AB03C5}"
+          SQLTask:SqlStatementSource="EXEC dbo.sp_ETL_Cargar_Dim_Tiempo;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Tarea 4 - Cargar Dim_Ubicacion"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Carga los 83 distritos y provincias de la Region La Libertad normalizados con codigos UBIGEO"
+      DTS:DTSID="{C811D56F-19A6-4752-B3FF-51D4D296DF9C}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Tarea 4 - Cargar Dim_Ubicacion"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2025; © 2025 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{4D5127DB-4535-4766-97DC-3049D8AB03C5}"
+          SQLTask:SqlStatementSource="EXEC dbo.sp_ETL_Cargar_Dim_Ubicacion;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Tarea 5 - Cargar Dim_Enfermedad"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Carga el catalogo CIE-10 para Dengue y Leishmaniasis"
+      DTS:DTSID="{BC08DD47-B660-43B3-8C01-DEC3285066DB}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Tarea 5 - Cargar Dim_Enfermedad"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2025; © 2025 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{4D5127DB-4535-4766-97DC-3049D8AB03C5}"
+          SQLTask:SqlStatementSource="EXEC dbo.sp_ETL_Cargar_Dim_Enfermedad;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Tarea 6 - Cargar Dim_Paciente"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Carga los perfiles demograficos aplicando la regla del curso de vida MINSA y reclasificando edades anomalas a 999"
+      DTS:DTSID="{9906AB99-4118-475D-9D19-82B72E127C7B}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Tarea 6 - Cargar Dim_Paciente"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2025; © 2025 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{4D5127DB-4535-4766-97DC-3049D8AB03C5}"
+          SQLTask:SqlStatementSource="EXEC dbo.sp_ETL_Cargar_Dim_Paciente;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Tarea 7 - Cargar Dim_Establecimiento"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Carga los establecimientos de salud con imputacion oficial de centros sin codigo bajo S/C"
+      DTS:DTSID="{FA2BBEC5-A00A-417D-85F1-F9F6BA72F34E}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Tarea 7 - Cargar Dim_Establecimiento"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2025; © 2025 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{4D5127DB-4535-4766-97DC-3049D8AB03C5}"
+          SQLTask:SqlStatementSource="EXEC dbo.sp_ETL_Cargar_Dim_Establecimiento;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Tarea 8 - Cargar Fact_Vigilancia"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Carga la tabla de hechos con claves subrogadas vinculadas a las 5 dimensiones y metricas clinicas"
+      DTS:DTSID="{810DC312-53C9-4DE9-86BA-E5C4E8F59677}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Tarea 8 - Cargar Fact_Vigilancia"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2025; © 2025 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{4D5127DB-4535-4766-97DC-3049D8AB03C5}"
+          SQLTask:SqlStatementSource="EXEC dbo.sp_ETL_Cargar_Fact_Vigilancia;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Tarea 9 - Validar Resultados DW"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Verifica el total de hechos cargados para certificar la integridad referencial"
+      DTS:DTSID="{D0B21F7C-D81B-4AF8-BA1C-596C6F2F0581}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Tarea 9 - Validar Resultados DW"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2025; © 2025 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{4D5127DB-4535-4766-97DC-3049D8AB03C5}"
+          SQLTask:SqlStatementSource="SELECT COUNT(*) AS hechos_cargados, (SELECT COUNT(*) FROM dbo.Staging_Vigilancia_LaLibertad) AS casos_staging FROM dbo.Fact_Vigilancia_Epidemiologica;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:PrecedenceConstraints>
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[{092331A6-B325-41EA-ACE0-C3522AE74396\}]"
+      DTS:CreationName=""
+      DTS:DTSID="{092331A6-B325-41EA-ACE0-C3522AE74396}"
+      DTS:From="Package\Tarea 5 - Cargar Dim_Enfermedad"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="{092331A6-B325-41EA-ACE0-C3522AE74396}"
+      DTS:To="Package\Tarea 6 - Cargar Dim_Paciente" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[{16928230-64E5-4A9E-AEB2-A79EB814F0DB\}]"
+      DTS:CreationName=""
+      DTS:DTSID="{16928230-64E5-4A9E-AEB2-A79EB814F0DB}"
+      DTS:From="Package\Tarea 3 - Cargar Dim_Tiempo"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="{16928230-64E5-4A9E-AEB2-A79EB814F0DB}"
+      DTS:To="Package\Tarea 4 - Cargar Dim_Ubicacion" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[{3EE1F475-A2DE-45C8-82C2-8D21A8B9702C\}]"
+      DTS:CreationName=""
+      DTS:DTSID="{3EE1F475-A2DE-45C8-82C2-8D21A8B9702C}"
+      DTS:From="Package\Tarea 8 - Cargar Fact_Vigilancia"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="{3EE1F475-A2DE-45C8-82C2-8D21A8B9702C}"
+      DTS:To="Package\Tarea 9 - Validar Resultados DW" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[{440F307E-CF09-4BCB-B86E-A2076AB472AA\}]"
+      DTS:CreationName=""
+      DTS:DTSID="{440F307E-CF09-4BCB-B86E-A2076AB472AA}"
+      DTS:From="Package\Tarea 7 - Cargar Dim_Establecimiento"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="{440F307E-CF09-4BCB-B86E-A2076AB472AA}"
+      DTS:To="Package\Tarea 8 - Cargar Fact_Vigilancia" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[{6780A4F0-E493-4188-B343-48CCB054870F\}]"
+      DTS:CreationName=""
+      DTS:DTSID="{6780A4F0-E493-4188-B343-48CCB054870F}"
+      DTS:From="Package\Tarea 1 - Limpiar Tablas DW"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="{6780A4F0-E493-4188-B343-48CCB054870F}"
+      DTS:To="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[{8BF6B9C4-3698-4C76-98DC-D5507137A1D0\}]"
+      DTS:CreationName=""
+      DTS:DTSID="{8BF6B9C4-3698-4C76-98DC-D5507137A1D0}"
+      DTS:From="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="{8BF6B9C4-3698-4C76-98DC-D5507137A1D0}"
+      DTS:To="Package\Tarea 3 - Cargar Dim_Tiempo" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[{AC91C396-D815-468D-B096-B282A65A2F25\}]"
+      DTS:CreationName=""
+      DTS:DTSID="{AC91C396-D815-468D-B096-B282A65A2F25}"
+      DTS:From="Package\Tarea 6 - Cargar Dim_Paciente"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="{AC91C396-D815-468D-B096-B282A65A2F25}"
+      DTS:To="Package\Tarea 7 - Cargar Dim_Establecimiento" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[{D9722B61-C215-4372-AF4F-A93CEEEE404A\}]"
+      DTS:CreationName=""
+      DTS:DTSID="{D9722B61-C215-4372-AF4F-A93CEEEE404A}"
+      DTS:From="Package\Tarea 4 - Cargar Dim_Ubicacion"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="{D9722B61-C215-4372-AF4F-A93CEEEE404A}"
+      DTS:To="Package\Tarea 5 - Cargar Dim_Enfermedad" />
+  </DTS:PrecedenceConstraints>
+  <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
+<!--Esta sección CDATA contiene la información de diseño del paquete. Esta sección incluye información como, por ejemplo, las coordenadas (x,y), el ancho y el alto.-->
+<!--Si edita manualmente esta sección y comete un error, puede eliminarlo. -->
+<!--El paquete podrá cargarse normalmente, pero se perderá la información de diseño anterior y el diseñador reorganizará los elementos automáticamente en la superficie de diseño.-->
+<Objects
+  Version="8">
+  <!--Cada uno de los nodos siguientes contiene propiedades que no afectan al comportamiento en tiempo de ejecución.-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="32" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="320,42"
+          Id="Package\Tarea 1 - Limpiar Tablas DW"
+          TopLeft="344.5,5.5" />
+        <NodeLayout
+          Size="320,42"
+          Id="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)"
+          TopLeft="344.5,107.5" />
+        <NodeLayout
+          Size="320,42"
+          Id="Package\Tarea 3 - Cargar Dim_Tiempo"
+          TopLeft="344.5,209.5" />
+        <NodeLayout
+          Size="320,42"
+          Id="Package\Tarea 4 - Cargar Dim_Ubicacion"
+          TopLeft="344.5,311.5" />
+        <NodeLayout
+          Size="320,42"
+          Id="Package\Tarea 5 - Cargar Dim_Enfermedad"
+          TopLeft="344.5,413.5" />
+        <NodeLayout
+          Size="320,42"
+          Id="Package\Tarea 6 - Cargar Dim_Paciente"
+          TopLeft="344.5,515.5" />
+        <NodeLayout
+          Size="320,42"
+          Id="Package\Tarea 7 - Cargar Dim_Establecimiento"
+          TopLeft="344.5,617.5" />
+        <NodeLayout
+          Size="320,42"
+          Id="Package\Tarea 8 - Cargar Fact_Vigilancia"
+          TopLeft="344.5,719.5" />
+        <NodeLayout
+          Size="320,42"
+          Id="Package\Tarea 9 - Validar Resultados DW"
+          TopLeft="344.5,821.5" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[{092331A6-B325-41EA-ACE0-C3522AE74396\}]"
+          TopLeft="504.5,455.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,60"
+              Start="0,0"
+              End="0,52.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[{16928230-64E5-4A9E-AEB2-A79EB814F0DB\}]"
+          TopLeft="504.5,251.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,60"
+              Start="0,0"
+              End="0,52.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[{3EE1F475-A2DE-45C8-82C2-8D21A8B9702C\}]"
+          TopLeft="504.5,761.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,60"
+              Start="0,0"
+              End="0,52.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[{440F307E-CF09-4BCB-B86E-A2076AB472AA\}]"
+          TopLeft="504.5,659.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,60"
+              Start="0,0"
+              End="0,52.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[{6780A4F0-E493-4188-B343-48CCB054870F\}]"
+          TopLeft="504.5,47.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,60"
+              Start="0,0"
+              End="0,52.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[{8BF6B9C4-3698-4C76-98DC-D5507137A1D0\}]"
+          TopLeft="504.5,149.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,60"
+              Start="0,0"
+              End="0,52.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[{AC91C396-D815-468D-B096-B282A65A2F25\}]"
+          TopLeft="504.5,557.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,60"
+              Start="0,0"
+              End="0,52.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[{D9722B61-C215-4372-AF4F-A93CEEEE404A\}]"
+          TopLeft="504.5,353.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,60"
+              Start="0,0"
+              End="0,52.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,52.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+  <TaskHost
+    design-time-name="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="280,42"
+          Id="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Recuento de Casos Extraidos"
+          TopLeft="260,140" />
+        <NodeLayout
+          Size="280,42"
+          Id="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Origen OLE DB - Microdatos MINSA"
+          TopLeft="246,29" />
+        <NodeLayout
+          Size="280,42"
+          Id="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad)\Destino OLE DB - Staging La Libertad"
+          TopLeft="260,240" />
+        <EdgeLayout
+          Id="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad).Paths[Row Count Output 1]"
+          TopLeft="400,182">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,58"
+              Start="0,0"
+              End="0,58">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,58" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad).Paths[OLE DB Source Output]"
+          TopLeft="386,71">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="14,69"
+              Start="0,0"
+              End="14,61.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,30.5" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,30.5"
+                    Point2="0,34.5"
+                    Point3="4,34.5" />
+                  <mssgle:LineSegment
+                    End="10,34.5" />
+                  <mssgle:CubicBezierSegment
+                    Point1="10,34.5"
+                    Point2="14,34.5"
+                    Point3="14,38.5" />
+                  <mssgle:LineSegment
+                    End="14,61.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+</Objects>]]></DTS:DesignTimeProperties>
+</DTS:Executable>

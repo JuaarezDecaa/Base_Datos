@@ -4,12 +4,32 @@ __pycache__/
 .ipynb_checkpoints/
 venv/
 env/
+.venv/
 
-# Datos masivos (no subir CSVs gigantes al repo)
+# Visual Studio / SSIS
+.vs/
+*.user
+*.suo
+bin/
+obj/
+
+# Datos masivos
 *.csv
+!muestra_*.csv
 *.tsv
 *.zip
 *.rar
 
 # Backups locales
 *.bak
+
+# Documentos pesados y presentaciones
+*.pptx
+*.pdf
+
+# Carpeta de documentacion completa
+08_documentacion/
+
+# Ignorar todos los archivos Markdown excepto el README.md principal de la raiz
+*.md
+!/README.md

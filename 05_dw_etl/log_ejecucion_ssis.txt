@@ -1,0 +1,94 @@
+Microsoft (R) SQL Server Execute Package Utility
+Version 17.0.1000.7 for 64-bit
+Copyright (C) 2025 Microsoft. All rights reserved.
+
+Started:  07:10:03
+Progress: 2026-09-23 19:10:03.62
+   Source: Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad) 
+   Validating: 0% complete
+End Progress
+Progress: 2026-09-23 19:10:03.70
+   Source: Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad) 
+   Validating: 33% complete
+End Progress
+Progress: 2026-09-23 19:10:03.73
+   Source: Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad) 
+   Validating: 66% complete
+End Progress
+Progress: 2026-09-23 19:10:03.73
+   Source: Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad) 
+   Validating: 100% complete
+End Progress
+Progress: 2026-09-23 19:10:03.89
+   Source: Tarea 1 - Limpiar Tablas DW 
+   Executing query "EXEC dbo.sp_ETL_LimpiarDW;".: 100% complete
+End Progress
+Progress: 2026-09-23 19:10:03.91
+   Source: Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad) 
+   Validating: 0% complete
+End Progress
+Progress: 2026-09-23 19:10:03.93
+   Source: Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad) 
+   Validating: 33% complete
+End Progress
+Progress: 2026-09-23 19:10:03.94
+   Source: Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad) 
+   Validating: 66% complete
+End Progress
+Progress: 2026-09-23 19:10:03.94
+   Source: Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad) 
+   Validating: 100% complete
+End Progress
+Warning: 2026-09-23 19:10:03.94
+   Code: 0x80049304
+   Source: Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad) SSIS.Pipeline
+   Description: Warning: Could not open global shared memory to communicate with performance DLL; data flow performance counters are not available.
+End Warning
+Progress: 2026-09-23 19:10:03.96
+   Source: Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad) 
+   Prepare for Execute: 100% complete
+End Progress
+Progress: 2026-09-23 19:10:04.00
+   Source: Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad) 
+   Pre-Execute: 100% complete
+End Progress
+Progress: 2026-09-23 19:10:04.03
+   Source: Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad) 
+   Post Execute: 100% complete
+End Progress
+Progress: 2026-09-23 19:10:04.03
+   Source: Tarea 2 - Flujo de Datos (Extraccion y Carga a Staging La Libertad) 
+   Cleanup: 100% complete
+End Progress
+Progress: 2026-09-23 19:10:04.05
+   Source: Tarea 3 - Cargar Dim_Tiempo 
+   Executing query "EXEC dbo.sp_ETL_Cargar_Dim_Tiempo;".: 100% complete
+End Progress
+Progress: 2026-09-23 19:10:04.28
+   Source: Tarea 4 - Cargar Dim_Ubicacion 
+   Executing query "EXEC dbo.sp_ETL_Cargar_Dim_Ubicacion;".: 100% complete
+End Progress
+Progress: 2026-09-23 19:10:04.43
+   Source: Tarea 5 - Cargar Dim_Enfermedad 
+   Executing query "EXEC dbo.sp_ETL_Cargar_Dim_Enfermedad;".: 100% complete
+End Progress
+Progress: 2026-09-23 19:10:05.10
+   Source: Tarea 6 - Cargar Dim_Paciente 
+   Executing query "EXEC dbo.sp_ETL_Cargar_Dim_Paciente;".: 100% complete
+End Progress
+Progress: 2026-09-23 19:10:05.28
+   Source: Tarea 7 - Cargar Dim_Establecimiento 
+   Executing query "EXEC dbo.sp_ETL_Cargar_Dim_Establecimiento;".: 100% complete
+End Progress
+Progress: 2026-09-23 19:10:06.23
+   Source: Tarea 8 - Cargar Fact_Vigilancia 
+   Executing query "EXEC dbo.sp_ETL_Cargar_Fact_Vigilancia;".: 100% complete
+End Progress
+Progress: 2026-09-23 19:10:06.25
+   Source: Tarea 9 - Validar Resultados DW 
+   Executing query "SELECT COUNT(*) AS hechos_cargados, (SELECT COUNT(...".: 100% complete
+End Progress
+DTExec: The package execution returned DTSER_SUCCESS (0).
+Started:  07:10:03
+Finished: 07:10:06
+Elapsed:  2.75 seconds

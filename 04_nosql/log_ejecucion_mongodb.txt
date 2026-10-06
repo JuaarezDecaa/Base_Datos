@@ -1,0 +1,23 @@
+>> PASO 1: Conectando a MongoDB en mongodb://localhost:27017 ...
+   Base de datos: DataSaludNoSQL
+   Coleccion:     atenciones_clinicas (reiniciada correctamente)
+
+>> PASO 2: [CREATE] Insertando historias clinicas semiestructuradas...
+   Exito: Se insertaron 4 fichas clinicas con campos variables.
+
+>> PASO 3: [READ] Consultando pacientes que requieren hospitalizacion...
+   * Paciente AT-2024-00101 (DENGUE CON SIGNOS DE ALARMA) en EL PORVENIR -> Cama: C-14 | Signos: ['Dolor abdominal intenso y continuo', 'Vomitos persistentes']
+   * Paciente AT-2024-00104 (DENGUE GRAVE) en CHEPEN -> Cama: UCI-02 | Signos: ['Shock por dengue', 'Dificultad respiratoria aguda']
+
+>> PASO 4: [UPDATE] Actualizando evolucion medica del paciente AT-2024-00101...
+   Plaquetas recuperadas: 135000
+   Evolucion favorable:   True
+   Nota medica:           Paciente estable. Alta medica autorizada.
+
+>> PASO 5: [DELETE] Eliminando la ficha descartada AT-2024-00103...
+   Registros eliminados: 1
+   Total de historias clinicas activas en MongoDB: 3
+
+=============================================================================
+OPERACIONES CRUD EN MONGODB COMPLETADAS EXITOSAMENTE
+=============================================================================

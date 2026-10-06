@@ -1,0 +1,35 @@
+================================================================
+REPORTE CUANTIFICADO DE DIAGNOSTICO DE CALIDAD DE DATOS (MINSA)
+================================================================
+
+Dataset: Dengue (Muestra)
+Total de registros analizados: 24
+----------------------------------------------------------------
+1. Valores vacios o nulos en 'localcod':   24 (100.0%)
+2. Valores vacios o nulos en 'localidad':  0 (0.0%)
+3. Valores vacios o nulos en 'diresa':    0 (0.0%)
+4. Registros exactamente duplicados:      0 (0.0%)
+
+Dataset: Leishmaniasis (Muestra)
+Total de registros analizados: 24
+----------------------------------------------------------------
+1. Valores vacios o nulos en 'localcod':   24 (100.0%)
+2. Valores vacios o nulos en 'localidad':  0 (0.0%)
+3. Valores vacios o nulos en 'diresa':    0 (0.0%)
+4. Registros exactamente duplicados:      0 (0.0%)
+
+Dataset: Dengue (Completo 2000-2024)
+Total de registros analizados: 1,029,421
+----------------------------------------------------------------
+1. Valores vacios o nulos en 'localcod':   148,641 (14.44%)
+2. Valores vacios o nulos en 'localidad':  122,598 (11.91%)
+3. Valores vacios o nulos en 'diresa':    23 (0.0%)
+4. Registros exactamente duplicados:      152,737 (14.84%)
+
+Dataset: Leishmaniasis (Completo 2000-2024)
+Total de registros analizados: 156,819
+----------------------------------------------------------------
+1. Valores vacios o nulos en 'localcod':   50,513 (32.21%)
+2. Valores vacios o nulos en 'localidad':  8,837 (5.64%)
+3. Valores vacios o nulos en 'diresa':    6 (0.0%)
+4. Registros exactamente duplicados:      1,119 (0.71%)

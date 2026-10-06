@@ -1,0 +1,107 @@
+=============================================================================
+GUÍA DE COMANDOS MANUALES PARA MONGODB (COMPASS Y _MONGOSH)
+Curso: Bases de Datos Avanzadas y Big Data (CIIN1021P) - DIRESA La Libertad
+=============================================================================
+
+Este archivo contiene los comandos listos para copiar y pegar uno por uno
+durante la sustentación o pruebas manuales frente al docente.
+
+-----------------------------------------------------------------------------
+MÉTODO 1: USANDO MONGODB COMPASS (INTERFAZ VISUAL CON CLICS)
+-----------------------------------------------------------------------------
+1. Abre MongoDB Compass desde el Menú Inicio de Windows.
+2. En la pantalla inicial, haz clic en el botón verde "Connect" (URI: mongodb://localhost:27017).
+3. En el menú de la izquierda, haz clic en la base de datos "DataSaludNoSQL" y luego en la colección "atenciones_clinicas".
+
+A. [CREATE] INSERTAR UN DOCUMENTO A MANO:
+   - Haz clic en "Add Data" -> "Insert Document".
+   - Pega el siguiente bloque JSON y haz clic en "Insert":
+
+{
+  "id_atencion": "AT-2024-MANUAL-01",
+  "fecha_atencion": { "$date": "2024-04-20T10:00:00Z" },
+  "departamento": "LA LIBERTAD",
+  "provincia": "TRUJILLO",
+  "distrito": "LA ESPERANZA",
+  "establecimiento": "HOSPITAL DISTRITAL JERUSALEN",
+  "enfermedad": "DENGUE CON SIGNOS DE ALARMA",
+  "cie10": "A97.1",
+  "paciente": { "edad": 22, "tipo_edad": "A", "sexo": "M", "etapa_vida": "JOVEN" },
+  "datos_clinicos": {
+    "dias_fiebre": 3,
+    "temperatura_axilar": 38.9,
+    "plaquetas": 92000,
+    "signos_alarma": ["Dolor abdominal", "Somnolencia"],
+    "requiere_hospitalizacion": true,
+    "cama_asignada": "C-08"
+  }
+}
+
+B. [READ] CONSULTAR EN LA BARRA "FILTER" DE COMPASS:
+   - En la casilla "Filter" arriba, pega exactamente esto y haz clic en "Find":
+     { "datos_clinicos.requiere_hospitalizacion": true }
+
+   - Si deseas consultar solo casos de DENGUE GRAVE:
+     { "enfermedad": "DENGUE GRAVE" }
+
+   - Si deseas consultar solo pacientes de LEISHMANIASIS:
+     { "enfermedad": "LEISHMANIASIS CUTANEA" }
+
+C. [UPDATE] ACTUALIZAR MANUALMENTE EN COMPASS:
+   - Pasa el ratón sobre cualquier documento y haz clic en el icono del LÁPIZ (Edit Document).
+   - Edita el valor del campo (por ejemplo, cambia plaquetas a 140000).
+   - Haz clic en "Update".
+
+D. [DELETE] ELIMINAR MANUALMENTE EN COMPASS:
+   - Pasa el ratón sobre el documento que deseas borrar y haz clic en el TACHO DE BASURA (Delete Document).
+
+
+-----------------------------------------------------------------------------
+MÉTODO 2: USANDO LA CONSOLA INTERACTIVA (_MONGOSH EN COMPASS O TERMINAL)
+-----------------------------------------------------------------------------
+En la parte inferior de MongoDB Compass, haz clic en la pestaña ">_MONGOSH"
+y ejecuta estos comandos línea por línea:
+
+// PASO 1: Seleccionar la base de datos
+use DataSaludNoSQL;
+
+// PASO 2: [CREATE] Insertar un documento individual
+db.atenciones_clinicas.insertOne({
+  "id_atencion": "AT-2024-DEMO-01",
+  "departamento": "LA LIBERTAD",
+  "distrito": "EL PORVENIR",
+  "enfermedad": "DENGUE CON SIGNOS DE ALARMA",
+  "datos_clinicos": {
+    "plaquetas": 78000,
+    "requiere_hospitalizacion": true,
+    "cama_asignada": "C-15",
+    "signos_alarma": ["Vómitos frecuentes", "Dolor abdominal"]
+  }
+});
+
+// PASO 3: [READ] Consultar pacientes hospitalizados con campos específicos
+db.atenciones_clinicas.find(
+  { "datos_clinicos.requiere_hospitalizacion": true },
+  { "id_atencion": 1, "distrito": 1, "enfermedad": 1, "datos_clinicos.cama_asignada": 1, "_id": 0 }
+);
+
+// PASO 4: [UPDATE] Actualizar evolución médica y plaquetas con el operador $set
+db.atenciones_clinicas.updateOne(
+  { "id_atencion": "AT-2024-DEMO-01" },
+  {
+    $set: {
+      "datos_clinicos.plaquetas": 145000,
+      "datos_clinicos.evolucion_favorable": true,
+      "datos_clinicos.observaciones": "Paciente dado de alta por recuperación favorable."
+    }
+  }
+);
+
+// PASO 5: [READ] Verificar que la actualización surtió efecto
+db.atenciones_clinicas.find({ "id_atencion": "AT-2024-DEMO-01" });
+
+// PASO 6: [DELETE] Eliminar el registro de prueba creado
+db.atenciones_clinicas.deleteOne({ "id_atencion": "AT-2024-DEMO-01" });
+
+// PASO 7: Contar cuántos documentos quedan en total
+db.atenciones_clinicas.countDocuments();

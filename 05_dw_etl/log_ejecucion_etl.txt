@@ -1,0 +1,10 @@
+REPORTE DE EJECUCION ETL — DATASALUD_DW
+==================================================
+Tabla                          Total      
+------------------------------ -----------
+Dim_Tiempo                            1378
+Dim_Ubicacion                           83
+Dim_Enfermedad                           4
+Dim_Paciente                           245
+Dim_Establecimiento                   1007
+Fact_Vigilancia_Epidemiologica        5000

@@ -1,0 +1,138 @@
+[
+  {
+    "id_atencion": "AT-2024-00101",
+    "fecha_atencion": "2024-04-12T09:30:00Z",
+    "departamento": "LA LIBERTAD",
+    "provincia": "TRUJILLO",
+    "distrito": "EL PORVENIR",
+    "establecimiento": "HOSPITAL SANTA ISABEL",
+    "enfermedad": "DENGUE CON SIGNOS DE ALARMA",
+    "cie10": "A97.1",
+    "paciente": {
+      "edad": 28,
+      "tipo_edad": "A",
+      "sexo": "F",
+      "etapa_vida": "JOVEN"
+    },
+    "datos_clinicos": {
+      "dias_fiebre": 4,
+      "temperatura_axilar": 39.2,
+      "plaquetas": 85000,
+      "hematocrito": 44.5,
+      "signos_alarma": [
+        "Dolor abdominal intenso y continuo",
+        "Vómitos persistentes"
+      ],
+      "requiere_hospitalizacion": true,
+      "cama_asignada": "C-14",
+      "evolucion_favorable": false
+    },
+    "seguimiento_epidemiologico": {
+      "visita_domiciliaria": true,
+      "control_larvario_foco": true,
+      "responsable_notificacion": "Lic. M. Cruzado"
+    }
+  },
+  {
+    "id_atencion": "AT-2024-00102",
+    "fecha_atencion": "2024-04-14T11:15:00Z",
+    "departamento": "LA LIBERTAD",
+    "provincia": "CHEPEN",
+    "distrito": "PACANGA",
+    "establecimiento": "PUESTO DE SALUD PACANGA",
+    "enfermedad": "LEISHMANIASIS CUTANEA",
+    "cie10": "B55.1",
+    "paciente": {
+      "edad": 35,
+      "tipo_edad": "A",
+      "sexo": "M",
+      "etapa_vida": "ADULTO"
+    },
+    "datos_clinicos": {
+      "tiempo_enfermedad_meses": 2,
+      "tipo_lesion": "Ulcera de bordes elevados e indurados",
+      "ubicacion_lesion": ["Brazo izquierdo", "Oreja derecha"],
+      "numero_lesiones": 2,
+      "frotis_directo_leishmania": "POSITIVO",
+      "tratamiento_indicado": {
+        "medicamento": "Antimoniato de meglumina",
+        "dosis_mg_dia": 1200,
+        "duracion_dias": 20,
+        "fecha_inicio": "2024-04-15"
+      },
+      "efectos_adversos": []
+    },
+    "seguimiento_epidemiologico": {
+      "zona_transmision_probable": "Caserío Huaca Blanca",
+      "actividad_ocupacional": "Agricultor",
+      "responsable_notificacion": "Dr. C. Paredes"
+    }
+  },
+  {
+    "id_atencion": "AT-2024-00103",
+    "fecha_atencion": "2024-04-16T14:40:00Z",
+    "departamento": "LA LIBERTAD",
+    "provincia": "TRUJILLO",
+    "distrito": "LA ESPERANZA",
+    "establecimiento": "CENTRO DE SALUD JERUSALEN",
+    "enfermedad": "DENGUE SIN SIGNOS DE ALARMA",
+    "cie10": "A97.0",
+    "paciente": {
+      "edad": 15,
+      "tipo_edad": "A",
+      "sexo": "M",
+      "etapa_vida": "ADOLESCENTE"
+    },
+    "datos_clinicos": {
+      "dias_fiebre": 2,
+      "temperatura_axilar": 38.4,
+      "plaquetas": 195000,
+      "hematocrito": 38.0,
+      "signos_alarma": [],
+      "requiere_hospitalizacion": false,
+      "tratamiento_indicado": {
+        "medicamento": "Paracetamol 500mg",
+        "hidratacion_oral_litros_dia": 2.5
+      }
+    },
+    "seguimiento_epidemiologico": {
+      "visita_domiciliaria": false,
+      "responsable_notificacion": "Dra. A. Miranda"
+    }
+  },
+  {
+    "id_atencion": "AT-2024-00104",
+    "fecha_atencion": "2024-04-18T16:20:00Z",
+    "departamento": "LA LIBERTAD",
+    "provincia": "ASCOPE",
+    "distrito": "CASA GRANDE",
+    "establecimiento": "HOSPITAL CASA GRANDE",
+    "enfermedad": "DENGUE GRAVE",
+    "cie10": "A97.2",
+    "paciente": {
+      "edad": 62,
+      "tipo_edad": "A",
+      "sexo": "F",
+      "etapa_vida": "ADULTO MAYOR"
+    },
+    "datos_clinicos": {
+      "dias_fiebre": 5,
+      "temperatura_axilar": 39.8,
+      "plaquetas": 28000,
+      "hematocrito": 51.2,
+      "signos_alarma": [
+        "Hipotensión severa (Shock por dengue)",
+        "Sangrado de mucosas (epistaxis)",
+        "Derrame pleural evidenciado por ecografía"
+      ],
+      "requiere_hospitalizacion": true,
+      "ingreso_uci": true,
+      "cama_asignada": "UCI-03",
+      "evolucion_favorable": false
+    },
+    "seguimiento_epidemiologico": {
+      "investigacion_brote_iniciada": true,
+      "responsable_notificacion": "Dr. M. Rodriguez"
+    }
+  }
+]
